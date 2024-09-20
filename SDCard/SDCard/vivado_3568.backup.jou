@@ -1,0 +1,21 @@
+#-----------------------------------------------------------
+# Vivado v2019.1 (64-bit)
+# SW Build 2552052 on Fri May 24 14:49:42 MDT 2019
+# IP Build 2548770 on Fri May 24 18:01:18 MDT 2019
+# Start of session at: Fri Sep 13 09:52:18 2024
+# Process ID: 3568
+# Current directory: E:/zynq_project/SDCard/SDCard
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent16632 E:\zynq_project\SDCard\SDCard\SDCard.xpr
+# Log file: E:/zynq_project/SDCard/SDCard/vivado.log
+# Journal file: E:/zynq_project/SDCard/SDCard\vivado.jou
+#-----------------------------------------------------------
+start_gui
+open_project E:/zynq_project/SDCard/SDCard/SDCard.xpr
+update_compile_order -fileset sources_1
+file copy -force E:/zynq_project/SDCard/SDCard/SDCard.runs/impl_1/system_wrapper.sysdef E:/zynq_project/SDCard/SDCard/SDCard.sdk/system_wrapper.hdf
+
+launch_sdk -workspace E:/zynq_project/SDCard/SDCard/SDCard.sdk -hwspec E:/zynq_project/SDCard/SDCard/SDCard.sdk/system_wrapper.hdf
+file mkdir E:/zynq_project/SDCard/SDCard/SDCard.sdk
+file copy -force E:/zynq_project/SDCard/SDCard/SDCard.runs/impl_1/system_wrapper.sysdef E:/zynq_project/SDCard/SDCard/SDCard.sdk/system_wrapper.hdf
+
+launch_sdk -workspace E:/zynq_project/SDCard/SDCard/SDCard.sdk -hwspec E:/zynq_project/SDCard/SDCard/SDCard.sdk/system_wrapper.hdf

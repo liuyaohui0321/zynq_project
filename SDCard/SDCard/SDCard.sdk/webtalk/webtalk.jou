@@ -1,0 +1,12 @@
+#-----------------------------------------------------------
+# Webtalk v2019.1 (64-bit)
+# SW Build 2552052 on Fri May 24 14:49:42 MDT 2019
+# 
+# Start of session at: Fri Sep 13 11:52:49 2024
+# Process ID: 9408
+# Current directory: E:/zynq_project/SDCard/SDCard/SDCard.sdk/webtalk
+# Command line: wbtcv.exe -mode batch -source sdk_webtalk.tcl
+# Log file: E:/zynq_project/SDCard/SDCard/SDCard.sdk/webtalk/webtalk.log
+# Journal file: E:/zynq_project/SDCard/SDCard/SDCard.sdk/webtalk\webtalk.jou
+#-----------------------------------------------------------
+source sdk_webtalk.tcl

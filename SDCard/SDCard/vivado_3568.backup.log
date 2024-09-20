@@ -1,0 +1,36 @@
+#-----------------------------------------------------------
+# Vivado v2019.1 (64-bit)
+# SW Build 2552052 on Fri May 24 14:49:42 MDT 2019
+# IP Build 2548770 on Fri May 24 18:01:18 MDT 2019
+# Start of session at: Fri Sep 13 09:52:18 2024
+# Process ID: 3568
+# Current directory: E:/zynq_project/SDCard/SDCard
+# Command line: vivado.exe -gui_launcher_event rodinguilauncherevent16632 E:\zynq_project\SDCard\SDCard\SDCard.xpr
+# Log file: E:/zynq_project/SDCard/SDCard/vivado.log
+# Journal file: E:/zynq_project/SDCard/SDCard\vivado.jou
+#-----------------------------------------------------------
+Sourcing tcl script 'D:/Xilinx/Vivado/2019.1/scripts/Vivado_init.tcl'
+start_gui
+open_project E:/zynq_project/SDCard/SDCard/SDCard.xpr
+Scanning sources...
+Finished scanning sources
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'D:/Xilinx/Vivado/2019.1/data/ip'.
+open_project: Time (s): cpu = 00:00:11 ; elapsed = 00:00:05 . Memory (MB): peak = 914.023 ; gain = 190.859
+update_compile_order -fileset sources_1
+file copy -force E:/zynq_project/SDCard/SDCard/SDCard.runs/impl_1/system_wrapper.sysdef E:/zynq_project/SDCard/SDCard/SDCard.sdk/system_wrapper.hdf
+
+launch_sdk -workspace E:/zynq_project/SDCard/SDCard/SDCard.sdk -hwspec E:/zynq_project/SDCard/SDCard/SDCard.sdk/system_wrapper.hdf
+INFO: [Vivado 12-393] Launching SDK...
+INFO: [Vivado 12-417] Running xsdk -workspace E:/zynq_project/SDCard/SDCard/SDCard.sdk -hwspec E:/zynq_project/SDCard/SDCard/SDCard.sdk/system_wrapper.hdf
+INFO: [Vivado 12-3157] SDK launch initiated. Please check console for any further messages.
+file mkdir E:/zynq_project/SDCard/SDCard/SDCard.sdk
+file copy -force E:/zynq_project/SDCard/SDCard/SDCard.runs/impl_1/system_wrapper.sysdef E:/zynq_project/SDCard/SDCard/SDCard.sdk/system_wrapper.hdf
+
+launch_sdk -workspace E:/zynq_project/SDCard/SDCard/SDCard.sdk -hwspec E:/zynq_project/SDCard/SDCard/SDCard.sdk/system_wrapper.hdf
+INFO: [Vivado 12-393] Launching SDK...
+INFO: [Vivado 12-417] Running xsdk -workspace E:/zynq_project/SDCard/SDCard/SDCard.sdk -hwspec E:/zynq_project/SDCard/SDCard/SDCard.sdk/system_wrapper.hdf
+INFO: [Vivado 12-3157] SDK launch initiated. Please check console for any further messages.
+exit
+INFO: [Common 17-206] Exiting Vivado at Fri Sep 13 11:09:00 2024...

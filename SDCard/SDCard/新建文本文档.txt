@@ -1,0 +1,1 @@
+如果GPIO 不设成All inputs     GPIO2设成all output  xgpio_setdatadirection 就会卡住

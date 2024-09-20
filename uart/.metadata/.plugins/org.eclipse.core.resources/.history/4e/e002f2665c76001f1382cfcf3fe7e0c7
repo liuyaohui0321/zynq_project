@@ -1,0 +1,182 @@
+/*
+ * uartps_intr.c
+ *
+ *  Created on: 2024年9月19日
+ *      Author: LIUYAOHUI
+ */
+#include <xparameters.h>
+#include <xil_exception.h>
+#include <xscugic.h>
+#include <xuartps.h>
+
+extern XScuGic InterruptController;
+static XUartPs UartInstance;
+#define UART_BUFFER_SIZE 256
+static u8 ReceiveBuffer[UART_BUFFER_SIZE];
+static int ReceiveCount = 0;
+// 定义循环缓冲区
+#define BUFFER_SIZE 256
+static u8 CircularBuffer[BUFFER_SIZE];
+static volatile int WriteIndex = 0;
+static volatile int ReadIndex = 0;
+
+// 检查缓冲区是否为空
+#define IS_BUFFER_EMPTY() (ReadIndex == WriteIndex)
+
+// 检查缓冲区是否已满
+#define IS_BUFFER_FULL() ((WriteIndex + 1) % BUFFER_SIZE == ReadIndex)
+//// 中断处理函数
+//void UartInterruptHandler(void *CallBackRef)
+//{
+//    XUartPs *UartInstancePtr = (XUartPs *)CallBackRef;
+//    u32 IsrStatus=0;
+//
+//    // 获取中断状态
+//    IsrStatus = XUartPs_ReadReg(UartInstancePtr->Config.BaseAddress, XUARTPS_ISR_OFFSET);
+//
+//    // 检查是否为接收中断
+//    if (IsrStatus & XUARTPS_IXR_RXOVR) {
+//        // 处理接收数据
+//        u8 ReceivedByte;
+//        ReceivedByte = XUartPs_ReadReg(UartInstancePtr->Config.BaseAddress, XUARTPS_FIFO_OFFSET);
+//        // 在这里添加您的接收数据处理逻辑
+////        xil_printf("Received byte: %c\r\n", ReceivedByte);
+//        XUartPs_WriteReg(UartInstancePtr->Config.BaseAddress,XUARTPS_FIFO_OFFSET, ReceivedByte);
+//
+//        // 清除中断标志
+//        XUartPs_WriteReg(UartInstancePtr->Config.BaseAddress, XUARTPS_ISR_OFFSET, XUARTPS_IXR_RXOVR);
+//    }
+//}
+// 中断处理函数
+//void UartInterruptHandler(void *CallBackRef)
+//{
+//    XUartPs *UartInstancePtr = (XUartPs *)CallBackRef;
+//    u32 IsrStatus=0;
+//
+//    // 获取中断状态
+//    IsrStatus = XUartPs_ReadReg(UartInstancePtr->Config.BaseAddress, XUARTPS_ISR_OFFSET);
+//
+//    // 检查是否为接收中断
+//    if (IsrStatus & (XUARTPS_IXR_RXOVR| XUARTPS_IXR_RXFULL | XUARTPS_IXR_TOUT))
+//    {
+//    	while (XUartPs_IsReceiveData(UartInstancePtr->Config.BaseAddress))
+//    	{
+//			if (ReceiveCount < UART_BUFFER_SIZE) {
+//				ReceiveBuffer[ReceiveCount] = XUartPs_ReadReg(UartInstancePtr->Config.BaseAddress, XUARTPS_FIFO_OFFSET);
+//				ReceiveCount++;
+//			} else {
+//				// 缓冲区已满，丢弃多余的数据
+//				XUartPs_ReadReg(UartInstancePtr->Config.BaseAddress, XUARTPS_FIFO_OFFSET);
+//			}
+//		}
+//
+//		// 回显接收到的数据
+//		for (int i = 0; i < ReceiveCount; i++) {
+//			XUartPs_SendByte(UartInstancePtr->Config.BaseAddress, ReceiveBuffer[i]);
+//		}
+//
+//		// 重置接收计数
+//		ReceiveCount = 0;
+//
+//		// 清除中断标志
+//		XUartPs_WriteReg(UartInstancePtr->Config.BaseAddress, XUARTPS_ISR_OFFSET, IsrStatus);
+//	}
+//}
+// 中断处理函数
+// UART中断处理函数
+void UartInterruptHandler(void *CallBackRef)
+{
+	XUartPs *UartInstancePtr = (XUartPs *)CallBackRef;
+	u32 IsrStatus;
+
+	// 获取中断状态
+	IsrStatus = XUartPs_ReadReg(UartInstancePtr->Config.BaseAddress, XUARTPS_ISR_OFFSET);
+
+	// 检查是否为接收中断
+	if (IsrStatus & (XUARTPS_IXR_RXOVR | XUARTPS_IXR_RXFULL | XUARTPS_IXR_TOUT)) {
+		while (XUartPs_IsReceiveData(UartInstancePtr->Config.BaseAddress)) {
+			if (!IS_BUFFER_FULL()) {
+				CircularBuffer[WriteIndex] = XUartPs_ReadReg(UartInstancePtr->Config.BaseAddress, XUARTPS_FIFO_OFFSET);
+				WriteIndex = (WriteIndex + 1) % BUFFER_SIZE;
+			} else {
+				// 缓冲区已满，丢弃数据
+				XUartPs_ReadReg(UartInstancePtr->Config.BaseAddress, XUARTPS_FIFO_OFFSET);
+			}
+		}
+	}
+
+	// 清除中断标志
+	XUartPs_WriteReg(UartInstancePtr->Config.BaseAddress, XUARTPS_ISR_OFFSET, IsrStatus);
+}
+
+// 初始化GIC和UART
+int SetupInterruptSystem1(XScuGic *GicInstancePtr, XUartPs *UartInstancePtr)
+{
+    int Status;
+
+//    // 初始化GIC驱动
+//    XScuGic_Config *GicConfig = XScuGic_LookupConfig(XPAR_SCUGIC_SINGLE_DEVICE_ID);
+//    if (GicConfig == NULL) {
+//        return XST_FAILURE;
+//    }
+//
+//    Status = XScuGic_CfgInitialize(GicInstancePtr, GicConfig, GicConfig->CpuBaseAddress);
+//    if (Status != XST_SUCCESS) {
+//        return XST_FAILURE;
+//    }
+
+    // 设置优先级和触发类型
+    XScuGic_SetPriorityTriggerType(GicInstancePtr, XPAR_XUARTPS_0_INTR, 0xA0, 0x3);
+
+    // 连接中断处理函数
+    Status = XScuGic_Connect(GicInstancePtr, XPAR_XUARTPS_0_INTR,
+                             (Xil_InterruptHandler)UartInterruptHandler,
+                             (void *)UartInstancePtr);
+    if (Status != XST_SUCCESS) {
+        return XST_FAILURE;
+    }
+
+    // 使能UART中断
+    XScuGic_Enable(GicInstancePtr, XPAR_XUARTPS_0_INTR);
+
+    // 初始化异常处理
+    Xil_ExceptionInit();
+    Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_INT,
+                                 (Xil_ExceptionHandler)XScuGic_InterruptHandler,
+                                 GicInstancePtr);
+    Xil_ExceptionEnable();
+
+    return XST_SUCCESS;
+}
+
+int UartPsIntr(void)
+{
+	// 初始化UART
+	int Status=0;
+    XUartPs_Config *UartConfig = XUartPs_LookupConfig(XPAR_XUARTPS_0_DEVICE_ID);
+    if (UartConfig == NULL) {
+        return XST_FAILURE;
+    }
+
+    Status = XUartPs_CfgInitialize(&UartInstance, UartConfig, UartConfig->BaseAddress);
+    if (Status != XST_SUCCESS) {
+        return XST_FAILURE;
+    }
+    // 设置UART波特率
+	Status = XUartPs_SetBaudRate(&UartInstance, 115200);
+	if (Status != XST_SUCCESS) {
+		return XST_FAILURE;
+	}
+    // 设置UART为正常模式
+    XUartPs_SetOperMode(&UartInstance, XUARTPS_OPER_MODE_NORMAL);
+
+    // 设置中断系统
+    Status = SetupInterruptSystem1(&InterruptController, &UartInstance);
+    if (Status != XST_SUCCESS) {
+        return XST_FAILURE;
+    }
+    XUartPs_SetRecvTimeout(&UartInstance, 8); // 设置为8个字符时间
+    // 使能UART接收中断
+    XUartPs_SetInterruptMask(&UartInstance, XUARTPS_IXR_RXOVR);
+    return;
+}

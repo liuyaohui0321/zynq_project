@@ -1,0 +1,8 @@
+22:24:23 **** Incremental Build of configuration Debug for project axi_dma_bsp_xaxidma_example_simple_intr_1 ****
+make pre-build main-build 
+a9-linaro-pre-build-step
+' '
+make: Nothing to be done for 'main-build'.
+
+22:24:23 Build Finished (took 109ms)
+

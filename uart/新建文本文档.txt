@@ -1,0 +1,11 @@
+PL端串口
+
+
+XScuGic_SetPriorityTriggerType 函数
+
+最后一个参数 Trigger 用于设置中断的触发类型。它定义了中断如何被激活。在ARM GIC (Generic Interrupt Controller) 中，有几种不同的触发类型：
+
+0x0: 低电平触发 (Level-sensitive, active low)
+0x1: 高电平触发 (Level-sensitive, active high)
+0x2: 下降沿触发 (Edge-sensitive, falling edge triggered)
+0x3: 上升沿触发 (Edge-sensitive, rising edge triggered)
